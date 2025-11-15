@@ -1,0 +1,10 @@
+/* Add your CSS styles here */
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}

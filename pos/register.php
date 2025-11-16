@@ -33,13 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->rowCount() > 0) {
                 $errors[] = 'Email already exists.';
             } else {
-                // WARNING: Storing passwords in plaintext is a major security risk.
+                // Hash the password
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
                 // Insert the new user with a default role (e.g., role_id = 2 for Pharmacist/Sales)
                 $default_role_id = 2;
-                $stmt = $conn->prepare("INSERT INTO users (name, email, password, role_id) VALUES (:name, :email, :password, :role_id)");
+                $stmt = $conn->prepare("INSERT INTO users (name, email, password_hash, role_id) VALUES (:name, :email, :password_hash, :role_id)");
                 $stmt->bindParam(':name', $name);
                 $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':password_hash', $password_hash);
                 $stmt->bindParam(':role_id', $default_role_id);
 
                 if ($stmt->execute()) {

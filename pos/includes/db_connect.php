@@ -1,7 +1,8 @@
 <?php
+//- Please add your database credentials here
 $servername = "localhost";
-$username = ""; // Replace with your database username
-$password = ""; // Replace with your database password
+$username = "your_username"; // Replace with your database username
+$password = "your_password"; // Replace with your database password
 $dbname = "pet_clinic_pos";
 
 try {

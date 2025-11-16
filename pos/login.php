@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($email) || empty($password)) {
             $errors[] = 'Email and password are required.';
         } else {
-            $stmt = $conn->prepare("SELECT id, name, password, role_id FROM users WHERE email = :email");
+            $stmt = $conn->prepare("SELECT id, name, password_hash, role_id FROM users WHERE email = :email");
             $stmt->bindParam(':email', $email);
             $stmt->execute();
 
             if ($stmt->rowCount() === 1) {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($password === $user['password']) {
+                if (password_verify($password, $user['password_hash'])) {
                     // Password is correct, start a new session
                     session_regenerate_id();
                     $_SESSION['user_id'] = $user['id'];

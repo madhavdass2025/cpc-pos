@@ -5,24 +5,19 @@ require_login();
 
 require_once 'includes/db_connect.php';
 require_once 'includes/classes/Supplier.php';
+require_once 'includes/classes/Account.php';
 
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $account = new Account($conn);
     $supplier_id = $_POST['supplier_id'];
     $payment_date = $_POST['payment_date'];
     $amount = $_POST['amount'];
     $payment_method = $_POST['payment_method'];
     $notes = $_POST['notes'];
 
-    $stmt = $conn->prepare("INSERT INTO supplier_payments (supplier_id, payment_date, amount, payment_method, notes) VALUES (:supplier_id, :payment_date, :amount, :payment_method, :notes)");
-    $stmt->bindParam(':supplier_id', $supplier_id);
-    $stmt->bindParam(':payment_date', $payment_date);
-    $stmt->bindParam(':amount', $amount);
-    $stmt->bindParam(':payment_method', $payment_method);
-    $stmt->bindParam(':notes', $notes);
-
-    if ($stmt->execute()) {
+    if ($account->create_supplier_payment($supplier_id, $payment_date, $amount, $payment_method, $notes)) {
         header('Location: report_supplier_ledger.php?supplier_id=' . $supplier_id);
         exit;
     } else {

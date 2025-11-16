@@ -43,7 +43,7 @@ class Account {
     }
 
     public function get_sales_register($start_date, $end_date) {
-        $query = "SELECT si.*, c.owner_name FROM sales_invoices si LEFT JOIN customers c ON si.customer_id = c.id WHERE si.invoice_date BETWEEN :start_date AND :end_date ORDER BY si.invoice_date DESC";
+        $query = "SELECT si.*, c.ownnam FROM sales_invoices si LEFT JOIN customers c ON si.customer_id = c.RegID WHERE si.invoice_date BETWEEN :start_date AND :end_date ORDER BY si.invoice_date DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':start_date', $start_date);
         $stmt->bindParam(':end_date', $end_date);
@@ -73,10 +73,33 @@ class Account {
     }
 
     public function get_customer_credit_report() {
-        $query = "SELECT c.owner_name, SUM(cl.debit_amount) - SUM(cl.credit_amount) as outstanding_balance FROM customer_ledger cl JOIN customers c ON cl.customer_id = c.id GROUP BY c.id HAVING outstanding_balance > 0";
+        $query = "SELECT c.ownnam, SUM(cl.debit_amount) - SUM(cl.credit_amount) as outstanding_balance FROM customer_ledger cl JOIN customers c ON cl.customer_id = c.RegID GROUP BY c.RegID HAVING outstanding_balance > 0";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
+    }
+
+    public function create_supplier_payment($supplier_id, $payment_date, $amount, $payment_method, $notes) {
+        $query = "INSERT INTO supplier_payments SET supplier_id=:supplier_id, payment_date=:payment_date, amount=:amount, payment_method=:payment_method, notes=:notes";
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize and bind
+        $supplier_id = htmlspecialchars(strip_tags($supplier_id));
+        $payment_date = htmlspecialchars(strip_tags($payment_date));
+        $amount = htmlspecialchars(strip_tags($amount));
+        $payment_method = htmlspecialchars(strip_tags($payment_method));
+        $notes = htmlspecialchars(strip_tags($notes));
+
+        $stmt->bindParam(":supplier_id", $supplier_id);
+        $stmt->bindParam(":payment_date", $payment_date);
+        $stmt->bindParam(":amount", $amount);
+        $stmt->bindParam(":payment_method", $payment_method);
+        $stmt->bindParam(":notes", $notes);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
 }
 ?>

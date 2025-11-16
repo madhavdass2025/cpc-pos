@@ -5,11 +5,16 @@ CREATE TABLE `roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `roles` (`id`, `role_name`) VALUES
+(1, 'Admin'),
+(2, 'Pharmacist/Sales'),
+(3, 'Inventory Manager');
+
 CREATE TABLE `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
   `role_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`)
@@ -49,35 +54,35 @@ CREATE TABLE `suppliers` (
 
 -- Customers
 CREATE TABLE `customers` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `customer_type` varchar(100) NOT NULL DEFAULT 'regular',
-  `registration_date` varchar(100) NOT NULL,
-  `registration_number` varchar(100) NOT NULL,
-  `pet_type` varchar(100) NOT NULL,
-  `pet_name` varchar(100) NOT NULL,
-  `pet_color` varchar(100) DEFAULT NULL,
-  `pet_sex` varchar(100) DEFAULT NULL,
-  `pet_breed` varchar(100) DEFAULT NULL,
+  `RegID` int NOT NULL AUTO_INCREMENT,
+  `custType` varchar(100) NOT NULL DEFAULT 'regular',
+  `RegDt` varchar(100) NOT NULL,
+  `RegNo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `Pettyp` varchar(100) NOT NULL,
+  `petnam` varchar(100) NOT NULL,
+  `petclr` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`RegID`),
+  `petsex` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `petbred` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `year` varchar(10) NOT NULL,
   `month` varchar(10) NOT NULL,
   `gram` varchar(10) NOT NULL,
   `kg` varchar(10) NOT NULL,
-  `pet_species` varchar(100) NOT NULL,
-  `doctor` varchar(100) DEFAULT NULL,
-  `owner_name` varchar(100) DEFAULT NULL,
-  `owner_address1` varchar(100) DEFAULT NULL,
-  `owner_address2` varchar(100) DEFAULT NULL,
-  `owner_location` varchar(50) DEFAULT NULL,
-  `owner_pincode` varchar(50) DEFAULT NULL,
-  `owner_mobile` varchar(100) DEFAULT NULL,
-  `owner_residence` varchar(100) DEFAULT NULL,
-  `owner_email` varchar(100) DEFAULT NULL,
-  `reports` tinyint(1) DEFAULT '0',
+  `petsp` varchar(100) NOT NULL,
+  `doctor` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownnam` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownadd1` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownadd2` varchar(100) DEFAULT NULL,
+  `ownloc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownpin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownmob` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownres` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `ownemail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Reports` tinyint(1) DEFAULT '0',
   `cancel` varchar(100) NOT NULL DEFAULT '0',
-  `cancel_done_by` varchar(100) DEFAULT NULL,
-  `dt` date DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `canceldoneby` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `dt` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- Inventory and Stock
@@ -117,7 +122,7 @@ CREATE TABLE `sales_invoices` (
   `user_id` INT NOT NULL,
   `payment_status` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`),
+  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`RegID`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -175,5 +180,5 @@ CREATE TABLE `customer_ledger` (
   `debit_amount` DECIMAL(10, 2) DEFAULT 0,
   `credit_amount` DECIMAL(10, 2) DEFAULT 0,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`)
+  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`RegID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
